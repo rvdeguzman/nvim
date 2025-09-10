@@ -17,6 +17,5 @@ return {
         })
         local api = require('nvim-tree.api')
         vim.keymap.set('n', '<leader>e', api.tree.toggle)
-        vim.notify('nvim-tree not installed/loaded', vim.log.levels.WARN)
     end
 }
