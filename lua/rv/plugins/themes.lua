@@ -20,6 +20,7 @@ return {
     {
         'thesimonho/kanagawa-paper.nvim'
     },
+    -- modified vague and black metal theme
     {
         'vague2k/vague.nvim',
         config = function()
@@ -49,8 +50,8 @@ return {
                     plus = "#7fa563",
                     delta = "#f3be7c",
                 },
+                transparent = true,
             }
-
             vim.cmd.colorscheme 'vague'
         end
     },

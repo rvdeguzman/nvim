@@ -246,6 +246,7 @@ return {
                     lsp_format = 'fallback'
                 },
                 formatters = {
+                    -- formatter configs
                 }
             })
         end,
