@@ -159,14 +159,6 @@ return {
             })
         end,
     },
-    -- nvim-autopairs
-    {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-        config = function()
-            require('nvim-autopairs').setup()
-        end,
-    },
     -- conform
     {
         'stevearc/conform.nvim',
@@ -199,5 +191,12 @@ return {
                 end,
             })
         end,
+    },
+    {
+        'mfussenegger/nvim-jdtls'
+    },
+    {
+        "nvim-flutter/flutter-tools.nvim",
+        ft = "dart",
     },
 }
