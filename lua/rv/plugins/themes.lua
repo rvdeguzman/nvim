@@ -29,7 +29,7 @@ return {
                     bg = "#000000",
                     inactiveBg = "#000000",
                     fg = "#c1c1c1",
-                    floatBorder = "#878787",
+                    floatBorder = "#c1c1c1",
                     line = "#252530",
                     comment = "#606079",
                     builtin = "#b4d4cf",
