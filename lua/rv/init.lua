@@ -12,6 +12,7 @@ vim.g.have_nerd_font = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-q>', '<cmd>qa!<CR>')
 vim.keymap.set('n', '<leader>wv', '<cmd>vsplit<CR>')
+vim.keymap.set('n', '<leader>wh', '<cmd>split<CR>')
 vim.keymap.set('n', '<leader>wd', '<cmd>close<CR>')
 
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y')
