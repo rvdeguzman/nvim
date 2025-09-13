@@ -10,11 +10,25 @@ return {
                 component_separators = '',
             },
             sections = {
-                lualine_c = {
+                lualine_a = {
                     {
-                        'filename',
-                        path = 1,
-                    }
+                        'mode',
+                        color = function()
+                            local mode = vim.fn.mode()
+                            if mode == 'i' then
+                                return { fg = "#000000", bg = "#7fa563", gui = "bold" } -- INSERT
+                            elseif mode == 'c' then
+                                return { fg = "#000000", bg = "#d8647e", gui = "bold" } -- COMMAND
+                            elseif mode == 'v' or mode == 'V' or mode == '\22' then
+                                return { fg = "#000000", bg = "#7e98e8", gui = "bold" } -- VISUAL
+                            else
+                                return { fg = "#000000", bg = "#fbcb97", gui = "bold" } -- NORMAL
+                            end
+                        end,
+                    },
+                },
+                lualine_c = {
+                    { 'filename', path = 1 },
                 },
                 lualine_x = { 'filetype' },
             },
