@@ -18,5 +18,8 @@ require("lazy").setup({
     spec = {
         { import = "rv.plugins" },
     },
+    change_detection = {
+        enabled = false,
+        notify = false,
+    }
 })
-

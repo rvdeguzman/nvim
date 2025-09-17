@@ -180,9 +180,9 @@ return {
                     lsp_format = 'fallback'
                 },
                 notify_on_error = true,
-                lsp_fallback = true,
             })
-            vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format({ async = true }) end)
+            vim.keymap.set({ 'n', 'v' }, '<leader>f',
+                function() require('conform').format({ async = true, lsp_fallback = true }) end)
             vim.api.nvim_create_autocmd("BufWritePre", {
                 pattern = "*",
                 callback = function()
