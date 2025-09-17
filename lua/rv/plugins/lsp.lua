@@ -38,6 +38,7 @@ return {
                     map('n', '<leader>ca', vim.lsp.buf.code_action)
                     map('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end)
                     map('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end)
+                    map('n', '<leader>F', function() vim.lsp.buf.format({ async = true }) end)
                     map('n', '<leader>q', vim.diagnostic.setloclist)
                     map('i', '<C-s>', vim.lsp.buf.signature_help)
                 end,
@@ -179,17 +180,16 @@ return {
                     lsp_format = 'fallback'
                 },
                 notify_on_error = true,
+                lsp_fallback = true,
             })
 
             vim.api.nvim_create_autocmd("BufWritePre", {
                 pattern = "*",
                 callback = function()
-                    require("conform").format({ async = false })
+                    require("conform").format({ async = true })
                 end,
             })
-
-            vim.keymap.set('n', '<leader>f', function() require('conform').format({ async = true }) end,
-                { desc = 'Format file' })
+            vim.keymap.set('n', '<leader>f', function() require('conform').format({ async = true }) end)
         end,
     },
     -- nvim-lint
