@@ -36,7 +36,6 @@ return {
                     map('n', 'gD', vim.lsp.buf.declaration)
                     map('n', '<leader>rn', vim.lsp.buf.rename)
                     map('n', '<leader>ca', vim.lsp.buf.code_action)
-                    map('n', '<leader>f', function() vim.lsp.buf.format({ async = true }) end)
                     map('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end)
                     map('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end)
                     map('n', '<leader>q', vim.diagnostic.setloclist)
@@ -57,7 +56,8 @@ return {
                     'lua', 'vim', 'vimdoc',
                     'javascript', 'typescript',
                     'c', 'cpp',
-                    'python',
+                    'python', 'html', 'css',
+                    'java', 'markdown', 'markdown_inline',
                 },
                 highlight = { enable = true, additional_vim_regex_highlighting = false },
                 indent = { enable = true },
@@ -154,7 +154,7 @@ return {
             })
             vim.lsp.enable('jdtls')
             require('mason-lspconfig').setup({
-                ensure_installed = { 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright' },
+                ensure_installed = { 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright', 'jdtls' },
                 automatic_enable = true,
             })
         end,
@@ -180,8 +180,17 @@ return {
                 },
                 notify_on_error = true,
             })
-        end,
 
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                pattern = "*",
+                callback = function()
+                    require("conform").format({ async = false })
+                end,
+            })
+
+            vim.keymap.set('n', '<leader>f', function() require('conform').format({ async = true }) end,
+                { desc = 'Format file' })
+        end,
     },
     -- nvim-lint
     {
@@ -189,7 +198,6 @@ return {
         config = function()
             require('lint').linters_by_ft = {
             }
-
             vim.api.nvim_create_autocmd({ "BufWritePost" }, {
                 callback = function()
                     require("lint").try_lint()
