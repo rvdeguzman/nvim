@@ -50,4 +50,13 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 vim.diagnostic.config({
     source = true,
+    severity_sort = true,
+    float = {
+        border = 'rounded',
+        source = 'always',
+        focusable = true,
+    },
+    virtual_text = {
+        prefix = '●',
+    },
 })

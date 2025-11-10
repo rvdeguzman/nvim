@@ -21,5 +21,18 @@ require("lazy").setup({
     change_detection = {
         enabled = false,
         notify = false,
-    }
+    },
+    performance = {
+        rtp = {
+            disabled_plugins = {
+                'gzip',
+                'matchit',
+                'matchparen',
+                'tarPlugin',
+                'tohtml',
+                'tutor',
+                'zipPlugin',
+            },
+        },
+    },
 })

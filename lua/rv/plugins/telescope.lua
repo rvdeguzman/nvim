@@ -31,9 +31,6 @@ return {
             desc = "Document symbols"
         },
         { "<leader>st", "<cmd>Telescope treesitter<cr>",           desc = "Treesitter symbols" },
-        { "gr",         "<cmd>Telescope lsp_references<cr>",       desc = "LSP references" },
-        { "gd",         "<cmd>Telescope lsp_definitions<cr>",      desc = "LSP definitions" },
-        { "gi",         "<cmd>Telescope lsp_implementations<cr>",  desc = "LSP implementations" },
         { "gt",         "<cmd>Telescope lsp_type_definitions<cr>", desc = "LSP type definitions" },
         {
             "<leader>sf",

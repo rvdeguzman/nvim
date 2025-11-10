@@ -1,27 +1,8 @@
 return {
     {
-        'rktjmp/lush.nvim'
-    },
-    {
-        'ellisonleao/gruvbox.nvim'
-    },
-    {
-        'sainnhe/gruvbox-material'
-    },
-    {
-        'rebelot/kanagawa.nvim'
-    },
-    {
-        'sainnhe/edge'
-    },
-    {
-        'zenbones-theme/zenbones.nvim'
-    },
-    {
-        'thesimonho/kanagawa-paper.nvim'
-    },
-    {
         'vague2k/vague.nvim',
+        lazy = false,
+        priority = 1000,
         config = function()
             require('vague').setup {
                 transparent = true,
@@ -29,7 +10,4 @@ return {
             vim.cmd.colorscheme 'vague'
         end
     },
-    {
-        'metalelf0/black-metal-theme-neovim',
-    }
 }
