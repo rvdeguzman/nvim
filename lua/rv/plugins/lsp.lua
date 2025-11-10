@@ -1,13 +1,89 @@
 return {
     {
         "williamboman/mason.nvim",
-        dependencies = {
-            "williamboman/mason-lspconfig.nvim",
-            "neovim/nvim-lspconfig",
-            "WhoIsSethDaniel/mason-tool-installer.nvim",
-        },
+        cmd = "Mason",
+        build = ":MasonUpdate",
         config = function()
             require('mason').setup()
+        end,
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = {
+            "williamboman/mason.nvim",
+            "neovim/nvim-lspconfig",
+        },
+        config = function()
+            local lspconfig = require('lspconfig')
+
+            -- Setup capabilities
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.completion.completionItem = {
+                documentationFormat = { 'markdown', 'plaintext' },
+                snippetSupport = true,
+                preselectSupport = true,
+                insertReplaceSupport = true,
+                labelDetailsSupport = true,
+                deprecatedSupport = true,
+                commitCharactersSupport = true,
+                tagSupport = { valueSet = { 1 } },
+                resolveSupport = {
+                    properties = { 'documentation', 'detail', 'additionalTextEdits' },
+                },
+            }
+
+            -- Setup lua_ls with custom settings
+            lspconfig.lua_ls.setup({
+                capabilities = capabilities,
+                settings = {
+                    Lua = {
+                        runtime = { version = 'LuaJIT' },
+                        diagnostics = { globals = { 'vim' } },
+                        workspace = {
+                            library = vim.api.nvim_get_runtime_file('', true),
+                            checkThirdParty = false,
+                        },
+                        telemetry = { enable = false },
+                    },
+                },
+            })
+
+            -- Setup ts_ls with custom settings
+            lspconfig.ts_ls.setup({
+                capabilities = capabilities,
+                settings = {
+                    javascript = { suggest = { autoImports = true } },
+                    typescript = {
+                        inlayHints = {
+                            includeInlayParameterNameHints = "all",
+                            includeInlayVariableTypeHints = true,
+                        },
+                    },
+                },
+            })
+
+            -- Setup mason-lspconfig
+            require('mason-lspconfig').setup({
+                ensure_installed = { 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright' },
+                automatic_install = true,
+                handlers = {
+                    -- Default handler
+                    function(server_name)
+                        lspconfig[server_name].setup({
+                            capabilities = capabilities,
+                        })
+                    end,
+                    -- Prevent re-setup of servers already configured above
+                    lua_ls = function() end,
+                    ts_ls = function() end,
+                },
+            })
+        end,
+    },
+    {
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+        dependencies = { "williamboman/mason.nvim" },
+        config = function()
             require('mason-tool-installer').setup({
                 ensure_installed = {
                     'stylua',
@@ -21,11 +97,10 @@ return {
         "neovim/nvim-lspconfig",
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
-            "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
-            "hrsh7th/cmp-nvim-lsp",
         },
         config = function()
+            -- Setup custom handlers for better UI
             vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
                 vim.lsp.handlers.hover, { border = "rounded" }
             )
@@ -33,6 +108,7 @@ return {
                 vim.lsp.handlers.signature_help, { border = "rounded" }
             )
 
+            -- Setup keybindings on LspAttach
             vim.api.nvim_create_autocmd('LspAttach', {
                 callback = function(args)
                     local client = vim.lsp.get_client_by_id(args.data.client_id)
@@ -96,61 +172,6 @@ return {
 
             -- folding keymaps
             vim.keymap.set('n', 'cj', 'za', { desc = 'Toggle fold under cursor' })
-        end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        dependencies = {
-            "williamboman/mason.nvim",
-            "neovim/nvim-lspconfig",
-            "hrsh7th/cmp-nvim-lsp",
-        },
-        config = function()
-            local lspconfig = require('lspconfig')
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
-            lspconfig.lua_ls.setup({
-                capabilities = capabilities,
-                settings = {
-                    Lua = {
-                        runtime = { version = 'LuaJIT' },
-                        diagnostics = { globals = { 'vim' } },
-                        workspace = {
-                            library = vim.api.nvim_get_runtime_file('', true),
-                            checkThirdParty = false,
-                        },
-                        telemetry = { enable = false },
-                    },
-                },
-            })
-
-            lspconfig.ts_ls.setup({
-                capabilities = capabilities,
-                settings = {
-                    javascript = { suggest = { autoImports = true } },
-                    typescript = {
-                        inlayHints = {
-                            includeInlayParameterNameHints = "all",
-                            includeInlayVariableTypeHints = true,
-                        },
-                    },
-                },
-            })
-
-            require('mason-lspconfig').setup({
-                ensure_installed = { 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright' },
-                automatic_install = true,
-                handlers = {
-                    function(server_name)
-                        lspconfig[server_name].setup({
-                            capabilities = capabilities,
-                        })
-                    end,
-                    lua_ls = function() end,
-                    ts_ls = function() end,
-                },
-            })
         end,
     },
     {

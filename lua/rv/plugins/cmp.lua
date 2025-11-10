@@ -28,7 +28,6 @@ return {
                 },
                 documentation = {
                     auto_show = true,
-                    auto_show_delay = 500,
                     window = {
                         border = 'rounded',
                     }
