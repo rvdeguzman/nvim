@@ -32,6 +32,7 @@ return {
         },
         { "<leader>st", "<cmd>Telescope treesitter<cr>",           desc = "Treesitter symbols" },
         { "gt",         "<cmd>Telescope lsp_type_definitions<cr>", desc = "LSP type definitions" },
+        { "gr",         "<cmd>Telescope lsp_references<cr>",       desc = "LSP References" },
         {
             "<leader>sf",
             function()
