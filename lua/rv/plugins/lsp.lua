@@ -11,11 +11,8 @@ return {
         "williamboman/mason-lspconfig.nvim",
         dependencies = {
             "williamboman/mason.nvim",
-            "neovim/nvim-lspconfig",
         },
         config = function()
-            local lspconfig = require('lspconfig')
-
             -- Setup capabilities
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             capabilities.textDocument.completion.completionItem = {
@@ -32,9 +29,13 @@ return {
                 },
             }
 
-            -- Setup lua_ls with custom settings
-            lspconfig.lua_ls.setup({
+            -- Default config for all LSP servers
+            vim.lsp.config['*'] = {
                 capabilities = capabilities,
+            }
+
+            -- Setup lua_ls with custom settings
+            vim.lsp.config.lua_ls = {
                 settings = {
                     Lua = {
                         runtime = { version = 'LuaJIT' },
@@ -46,11 +47,10 @@ return {
                         telemetry = { enable = false },
                     },
                 },
-            })
+            }
 
             -- Setup ts_ls with custom settings
-            lspconfig.ts_ls.setup({
-                capabilities = capabilities,
+            vim.lsp.config.ts_ls = {
                 settings = {
                     javascript = { suggest = { autoImports = true } },
                     typescript = {
@@ -60,24 +60,16 @@ return {
                         },
                     },
                 },
-            })
+            }
 
-            -- Setup mason-lspconfig
+            -- Setup mason-lspconfig (installs servers only)
             require('mason-lspconfig').setup({
                 ensure_installed = { 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright' },
                 automatic_install = true,
-                handlers = {
-                    -- Default handler
-                    function(server_name)
-                        lspconfig[server_name].setup({
-                            capabilities = capabilities,
-                        })
-                    end,
-                    -- Prevent re-setup of servers already configured above
-                    lua_ls = function() end,
-                    ts_ls = function() end,
-                },
             })
+
+            -- Enable all installed LSP servers
+            vim.lsp.enable({ 'lua_ls', 'ts_ls', 'clangd', 'ruff', 'pyright' })
         end,
     },
     {
