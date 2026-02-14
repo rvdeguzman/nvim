@@ -1,10 +1,10 @@
-vim.opt.winborder = 'bold'
+vim.opt.winborder = "bold"
 
 vim.opt.showmode = false
 vim.opt.number = true
 vim.opt.relativenumber = true
 
-vim.opt.mouse = 'a'
+vim.opt.mouse = "a"
 
 -- files
 vim.opt.undofile = true
@@ -14,7 +14,7 @@ vim.opt.swapfile = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
-vim.opt.signcolumn = 'yes'
+vim.opt.signcolumn = "yes"
 vim.opt.termguicolors = true
 
 -- timeouts
@@ -35,28 +35,28 @@ vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.smartindent = true
 
-vim.opt.inccommand = 'split'
+vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-    group = vim.api.nvim_create_augroup("HighlightYank", { clear = true }),
-    callback = function()
-        vim.highlight.on_yank({
-            timeout = 75,
-        })
-    end,
+	group = vim.api.nvim_create_augroup("HighlightYank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank({
+			timeout = 75,
+		})
+	end,
 })
 
 vim.diagnostic.config({
-    source = true,
-    severity_sort = true,
-    float = {
-        border = 'rounded',
-        source = 'always',
-        focusable = true,
-    },
-    virtual_text = {
-        prefix = '●',
-    },
+	source = true,
+	severity_sort = true,
+	float = {
+		border = "rounded",
+		source = "always",
+		focusable = true,
+	},
+	virtual_text = {
+		prefix = "●",
+	},
 })
