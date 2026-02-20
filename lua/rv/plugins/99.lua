@@ -2,14 +2,13 @@ return {
 	"ThePrimeagen/99",
 	config = function()
 		local _99 = require("99")
-
 		-- For logging that is to a file if you wish to trace through requests
 		-- for reporting bugs, i would not rely on this, but instead the provided
 		-- logging mechanisms within 99.  This is for more debugging purposes
 		local cwd = vim.uv.cwd()
 		local basename = vim.fs.basename(cwd)
 		_99.setup({
-			provider = _99.ClaudeCodeProvider, -- default: OpenCodeProvider
+			-- provider = _99.OpenCodeProvider, -- default: OpenCodeProvider
 			logger = {
 				level = _99.DEBUG,
 				path = "/tmp/" .. basename .. ".99.debug",
