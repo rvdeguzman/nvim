@@ -14,8 +14,8 @@ return {
         opts = {
             keymap = {
                 preset = 'enter',
-                ['<S-Tab>'] = { 'select_prev', 'fallback' },
-                ['<Tab>'] = { 'select_next', 'fallback' },
+                ['<S-Tab>'] = { 'snippet_backward', 'select_prev', 'fallback' },
+                ['<Tab>'] = { 'snippet_forward', 'select_next', 'fallback' },
             },
             sources = {
                 default = { 'lsp', 'path', 'snippets', 'buffer' },
