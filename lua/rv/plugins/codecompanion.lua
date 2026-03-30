@@ -20,6 +20,13 @@ return {
 						},
 					})
 				end,
+				codex = function()
+					return require("codecompanion.adapters").extend("codex", {
+						defaults = {
+							auth_method = "chatgpt",
+						},
+					})
+				end,
 			},
 		},
 		strategies = {
@@ -49,6 +56,15 @@ return {
 			vim.schedule(function()
 				vim.notify(
 					"CodeCompanion: CLAUDE_CODE_OAUTH_TOKEN is not set in Neovim's environment",
+					vim.log.levels.WARN
+				)
+			end)
+		end
+
+		if vim.fn.executable("codex-acp") == 0 then
+			vim.schedule(function()
+				vim.notify(
+					"CodeCompanion: codex-acp is not installed or not in PATH",
 					vim.log.levels.WARN
 				)
 			end)
