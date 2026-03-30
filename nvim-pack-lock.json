@@ -90,7 +90,8 @@
     },
     "harpoon": {
       "rev": "ed1f853847ffd04b2b61c314865665e1dadf22c7",
-      "src": "https://github.com/ThePrimeagen/harpoon"
+      "src": "https://github.com/ThePrimeagen/harpoon",
+      "version": "'harpoon2'"
     },
     "huez.nvim": {
       "rev": "03e193e4aa02b5b3a439d0cc5edeb85a2f7b5415",
@@ -169,7 +170,7 @@
       "src": "https://github.com/nvim-tree/nvim-tree.lua"
     },
     "nvim-treesitter": {
-      "rev": "42fc28ba918343ebfd5565147a42a26580579482",
+      "rev": "cf12346a3414fa1b06af75c79faebe7f76df080a",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {

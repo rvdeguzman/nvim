@@ -34,6 +34,32 @@ map('n', '<leader>fr', function()
   MiniPick.builtin.resume()
 end, { desc = 'Resume picker' })
 
+map('n', '<leader>m', '<cmd>Mason<cr>', { desc = 'Mason' })
+
+map('n', '<leader>qs', function()
+  local ok, active = pcall(MiniSessions.get_latest)
+  if ok and active ~= nil then
+    MiniSessions.write()
+    return
+  end
+
+  vim.ui.input({ prompt = 'Session name: ' }, function(name)
+    if name == nil or name == '' then
+      return
+    end
+
+    MiniSessions.write(name)
+  end)
+end, { desc = 'Session save' })
+
+map('n', '<leader>ql', function()
+  MiniSessions.select()
+end, { desc = 'Session load' })
+
+map('n', '<leader>qd', function()
+  MiniSessions.select('delete')
+end, { desc = 'Session delete' })
+
 map('n', '<leader>bd', function()
   MiniBufremove.delete(0, false)
 end, { desc = 'Delete buffer' })

@@ -35,7 +35,7 @@ vim.opt.smartindent = true
 
 vim.diagnostic.config({
   severity_sort = true,
-  source = 'if_many',
+  source = true,
   float = {
     border = 'rounded',
     source = 'if_many',
