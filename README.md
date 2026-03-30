@@ -1,3 +1,3 @@
 my nvim config
-- lazy has plugin manager etc
+- vim.pack is the plugin manager
 - minimal is just a minimal config for nvim
