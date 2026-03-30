@@ -4,37 +4,24 @@ return {
 		cmd = "Mason",
 		build = ":MasonUpdate",
 		config = function()
-			require("mason").setup()
+			require("mason").setup({
+				PATH = "prepend",
+			})
 		end,
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = {
 			"williamboman/mason.nvim",
+			"saghen/blink.cmp",
 		},
 		config = function()
-			-- Setup capabilities
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.completion.completionItem = {
-				documentationFormat = { "markdown", "plaintext" },
-				snippetSupport = true,
-				preselectSupport = true,
-				insertReplaceSupport = true,
-				labelDetailsSupport = true,
-				deprecatedSupport = true,
-				commitCharactersSupport = true,
-				tagSupport = { valueSet = { 1 } },
-				resolveSupport = {
-					properties = { "documentation", "detail", "additionalTextEdits" },
-				},
-			}
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-			-- Default config for all LSP servers
 			vim.lsp.config["*"] = {
 				capabilities = capabilities,
 			}
 
-			-- Setup lua_ls with custom settings
 			vim.lsp.config.lua_ls = {
 				settings = {
 					Lua = {
@@ -49,7 +36,6 @@ return {
 				},
 			}
 
-			-- Setup ts_ls with custom settings
 			vim.lsp.config.ts_ls = {
 				settings = {
 					javascript = { suggest = { autoImports = true } },
@@ -62,22 +48,11 @@ return {
 				},
 			}
 
-			-- python
-			vim.lsp.config.pyright = {
-				settings = {
-					python = {
-						pythonPath = ".venv/bin/python",
-					},
-				},
-			}
-
-			-- Setup mason-lspconfig (installs servers only)
 			require("mason-lspconfig").setup({
 				ensure_installed = { "lua_ls", "ts_ls", "clangd", "ruff", "pyright" },
 				automatic_install = true,
 			})
 
-			-- Enable all installed LSP servers
 			vim.lsp.enable({ "lua_ls", "ts_ls", "clangd", "ruff", "pyright" })
 		end,
 	},
