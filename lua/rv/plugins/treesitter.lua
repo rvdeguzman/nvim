@@ -1,11 +1,12 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
+	branch = "main",
 	build = ":TSUpdate",
 	dependencies = {
 		"nvim-treesitter/nvim-treesitter-context",
 	},
 	config = function()
-		require("nvim-treesitter.configs").setup({
+		require("nvim-treesitter").setup({
 			ensure_installed = {
 				"lua",
 				"vim",
@@ -25,20 +26,14 @@ return {
 				"rust",
 			},
 			auto_install = true,
-			highlight = {
-				enable = true,
-			},
-			indent = {
-				enable = true,
-			},
 		})
 
-		vim.opt.foldmethod = 'expr'
-		vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+		vim.opt.foldmethod = "expr"
+		vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		vim.opt.foldlevel = 99
 		vim.opt.foldlevelstart = 99
 		vim.opt.foldenable = true
 
-		vim.keymap.set('n', 'cj', 'za', { desc = 'Toggle fold under cursor' })
+		vim.keymap.set("n", "cj", "za", { desc = "Toggle fold under cursor" })
 	end,
 }
