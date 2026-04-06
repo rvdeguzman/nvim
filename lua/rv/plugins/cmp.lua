@@ -38,6 +38,7 @@ return {
 					},
 				},
 				menu = {
+					auto_show = true,
 					scrollbar = false,
 					draw = {
 						treesitter = { 'lsp' },
@@ -47,10 +48,48 @@ return {
 							{ 'kind', gap = 1 },
 							{ 'source_name', gap = 1 },
 						},
+						components = {
+							kind_icon = {
+								ellipsis = false,
+								text = function(ctx)
+										local kind_icons = {
+											Class = 'C',
+											Color = '#',
+										Constructor = '+',
+										Constant = 'c',
+										Enum = 'E',
+										EnumMember = 'e',
+										Event = '*',
+										Field = '.',
+										File = 'f',
+										Folder = 'd',
+										Function = 'f',
+										Interface = 'I',
+										Keyword = 'k',
+										Method = 'm',
+										Module = 'M',
+										Operator = '=',
+										Property = ':',
+										Snippet = 'S',
+										Struct = 'S',
+										Text = 't',
+										Unit = 'u',
+										Value = 'v',
+										Variable = 'v',
+									}
+
+									return kind_icons[ctx.kind] or ctx.kind_icon
+								end,
+							},
+						},
 					},
+				},
+				ghost_text = {
+					enabled = true,
 				},
 			},
 			snippets = {
+				preset = 'luasnip',
 				expand = function(snippet)
 					require('luasnip').lsp_expand(snippet)
 				end,
@@ -76,6 +115,21 @@ return {
 			},
 		},
 		opts_extend = { 'sources.default' },
+		config = function(_, opts)
+			require('blink.cmp').setup(opts)
+
+			vim.api.nvim_create_autocmd('ModeChanged', {
+				group = vim.api.nvim_create_augroup('rv-blink-snippets', { clear = true }),
+				pattern = { 's:n', 'i:n' },
+				callback = function()
+					local luasnip = require('luasnip')
+					local current = luasnip.session.current_nodes[vim.api.nvim_get_current_buf()]
+					if current and not luasnip.session.jump_active then
+						luasnip.unlink_current()
+					end
+				end,
+			})
+		end,
 	},
 	{
 		"windwp/nvim-autopairs",
