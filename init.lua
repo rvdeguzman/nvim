@@ -669,6 +669,7 @@ require("lazy").setup({
 			--  See `:help lsp-config` for information about keys and how to configure
 			---@type table<string, vim.lsp.Config>
 			local servers = {
+				bashls = {},
 				clangd = {},
 				gopls = {},
 				pyright = {},
@@ -718,6 +719,7 @@ require("lazy").setup({
 			--
 			-- You can press `g?` for help in this menu.
 			local ensure_installed = {
+				"bash-language-server",
 				"black",
 				"clang-format",
 				"clangd",
