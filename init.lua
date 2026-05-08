@@ -93,6 +93,24 @@ vim.g.maplocalleader = " "
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Disable optional remote providers that this config does not use.
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+
+vim.filetype.add({
+	extension = {
+		gotmpl = "gotmpl",
+	},
+	filename = {
+		["go.work"] = "gowork",
+	},
+	pattern = {
+		[".*%.go%.tmpl"] = "gotmpl",
+	},
+})
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -197,7 +215,13 @@ vim.diagnostic.config({
 	virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
 	-- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
-	jump = { float = true },
+	jump = {
+		on_jump = function(diagnostic, bufnr)
+			if diagnostic then
+				vim.diagnostic.open_float({ bufnr = bufnr, scope = "cursor", focus = false })
+			end
+		end,
+	},
 })
 
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
@@ -281,22 +305,6 @@ require("lazy").setup({
 	-- options to `gitsigns.nvim`.
 	--
 	-- See `:help gitsigns` to understand what the configuration keys do
-	{ -- Adds git related signs to the gutter, as well as utilities for managing changes
-		"lewis6991/gitsigns.nvim",
-		---@module 'gitsigns'
-		---@type Gitsigns.Config
-		---@diagnostic disable-next-line: missing-fields
-		opts = {
-			signs = {
-				add = { text = "+" }, ---@diagnostic disable-line: missing-fields
-				change = { text = "~" }, ---@diagnostic disable-line: missing-fields
-				delete = { text = "_" }, ---@diagnostic disable-line: missing-fields
-				topdelete = { text = "‾" }, ---@diagnostic disable-line: missing-fields
-				changedelete = { text = "~" }, ---@diagnostic disable-line: missing-fields
-			},
-		},
-	},
-
 	-- NOTE: Plugins can also be configured to run Lua code when they are loaded.
 	--
 	-- This is often very useful to both group configuration, as well as handle
@@ -324,7 +332,9 @@ require("lazy").setup({
 
 			-- Document existing key chains
 			spec = {
+				{ "<leader>9", group = "[9]9 AI", mode = { "n", "v" } },
 				{ "<leader>a", group = "[A]I" },
+				{ "<leader>g", group = "[G]it" },
 				{ "<leader>h", group = "[H]arpoon" },
 				{ "<leader>o", group = "[O]pen" },
 				{ "<leader>s", group = "[S]earch", mode = { "n", "v" } },
@@ -480,7 +490,12 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader><leader>", builtin.find_files, { desc = "[ ] Find files" })
 			vim.keymap.set("n", "<leader>,", builtin.live_grep, { desc = "Live grep" })
 			vim.keymap.set("n", "<leader>.", builtin.oldfiles, { desc = "Recent files" })
-			vim.keymap.set("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, { desc = "Workspace symbols" })
+			vim.keymap.set(
+				"n",
+				"<leader>sW",
+				builtin.lsp_dynamic_workspace_symbols,
+				{ desc = "[S]earch [W]orkspace symbols" }
+			)
 
 			-- Override default behavior and theme when searching
 			vim.keymap.set("n", "<leader>/", function()
@@ -655,17 +670,9 @@ require("lazy").setup({
 			---@type table<string, vim.lsp.Config>
 			local servers = {
 				clangd = {},
-				clojure_lsp = {},
 				gopls = {},
 				pyright = {},
 				ruff = {},
-				tinymist = {},
-				-- rust_analyzer = {},
-				--
-				-- Some languages (like typescript) have entire language plugins that can be useful:
-				--    https://github.com/pmizio/typescript-tools.nvim
-				--
-				-- But for many setups, the LSP (`ts_ls`) will work just fine
 				ts_ls = {},
 
 				-- Special Lua Config, as recommended by neovim help docs
@@ -710,14 +717,20 @@ require("lazy").setup({
 			--    :Mason
 			--
 			-- You can press `g?` for help in this menu.
-			local ensure_installed = vim.tbl_keys(servers or {})
-			vim.list_extend(ensure_installed, {
+			local ensure_installed = {
 				"black",
+				"clang-format",
+				"clangd",
+				"goimports",
+				"gopls",
+				"lua-language-server",
 				"prettier",
+				"pyright",
+				"ruff",
 				"shfmt",
 				"stylua",
-				"typstyle",
-			})
+				"typescript-language-server",
+			}
 
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
@@ -747,29 +760,28 @@ require("lazy").setup({
 		opts = {
 			notify_on_error = false,
 			format_on_save = function(bufnr)
-				-- Disable "format_on_save lsp_fallback" for languages that don't
-				-- have a well standardized coding style. You can add additional
-				-- languages here or re-enable it for the disabled ones.
-				local disable_filetypes = { c = true, cpp = true }
-				if disable_filetypes[vim.bo[bufnr].filetype] then
-					return nil
-				else
-					return {
-						timeout_ms = 500,
-						lsp_format = "fallback",
-					}
-				end
+				return {
+					timeout_ms = 1000,
+					lsp_format = "fallback",
+				}
 			end,
 			formatters_by_ft = {
+				c = { "clang-format" },
+				cpp = { "clang-format" },
+				go = { "goimports", "gofmt" },
 				lua = { "stylua" },
-				python = { "ruff_format", "black", stop_after_first = true },
+				python = function(bufnr)
+					if require("conform").get_formatter_info("ruff_format", bufnr).available then
+						return { "ruff_format" }
+					end
+					return { "black" }
+				end,
 				javascript = { "prettier", stop_after_first = true },
 				javascriptreact = { "prettier", stop_after_first = true },
 				typescript = { "prettier", stop_after_first = true },
 				typescriptreact = { "prettier", stop_after_first = true },
 				json = { "prettier", stop_after_first = true },
 				markdown = { "prettier", stop_after_first = true },
-				typst = { "typstyle", stop_after_first = true },
 				yaml = { "prettier", stop_after_first = true },
 				sh = { "shfmt", stop_after_first = true },
 				bash = { "shfmt", stop_after_first = true },
@@ -910,27 +922,37 @@ require("lazy").setup({
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
-		build = ":TSUpdate",
+		build = function()
+			require("nvim-treesitter")
+				.install({
+					"bash",
+					"c",
+					"cpp",
+					"diff",
+					"go",
+					"gomod",
+					"gosum",
+					"html",
+					"javascript",
+					"jsdoc",
+					"json",
+					"lua",
+					"luadoc",
+					"markdown",
+					"markdown_inline",
+					"python",
+					"query",
+					"tsx",
+					"typescript",
+					"vim",
+					"vimdoc",
+					"yaml",
+				})
+				:wait(300000)
+		end,
 		branch = "main",
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
 		config = function()
-			-- ensure basic parser are installed
-			local parsers = {
-				"bash",
-				"c",
-				"diff",
-				"html",
-				"lua",
-				"luadoc",
-				"markdown",
-				"markdown_inline",
-				"query",
-				"typst",
-				"vim",
-				"vimdoc",
-			}
-			require("nvim-treesitter").install(parsers)
-
 			vim.opt.foldmethod = "expr"
 			vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 			vim.opt.foldlevel = 99
@@ -953,7 +975,6 @@ require("lazy").setup({
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end
 
-			local available_parsers = require("nvim-treesitter").get_available()
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function(args)
 					local buf, filetype = args.buf, args.match
@@ -966,15 +987,6 @@ require("lazy").setup({
 					local installed_parsers = require("nvim-treesitter").get_installed("parsers")
 
 					if vim.tbl_contains(installed_parsers, language) then
-						-- enable the parser if it is installed
-						treesitter_try_attach(buf, language)
-					elseif vim.tbl_contains(available_parsers, language) then
-						-- if a parser is available in `nvim-treesitter` auto install it, and enable it after the installation is done
-						require("nvim-treesitter").install(language):await(function()
-							treesitter_try_attach(buf, language)
-						end)
-					else
-						-- try to enable treesitter features in case the parser exists but is not available from `nvim-treesitter`
 						treesitter_try_attach(buf, language)
 					end
 				end,
@@ -1009,6 +1021,9 @@ require("lazy").setup({
 	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 	-- you can continue same window with `<space>sr` which resumes last telescope search
 }, { ---@diagnostic disable-line: missing-fields
+	rocks = {
+		enabled = false,
+	},
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
 		-- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
