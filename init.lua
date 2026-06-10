@@ -674,6 +674,7 @@ require("lazy").setup({
 				gopls = {},
 				pyright = {},
 				ruff = {},
+				tinymist = {},
 				ts_ls = {},
 
 				-- Special Lua Config, as recommended by neovim help docs
@@ -731,6 +732,7 @@ require("lazy").setup({
 				"ruff",
 				"shfmt",
 				"stylua",
+				"tinymist",
 				"typescript-language-server",
 			}
 
