@@ -672,6 +672,7 @@ require("lazy").setup({
 				bashls = {},
 				clangd = {},
 				gopls = {},
+				sourcekit = {},
 				pyright = {},
 				ruff = {},
 				tinymist = {},
