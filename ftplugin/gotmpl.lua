@@ -1,1 +1,0 @@
--- Runtime marker so `:checkhealth vim.lsp` recognizes the `gotmpl` filetype.
